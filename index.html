@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050807">
+  <meta name="description" content="Guide interactif en français pour identifier les entités de Phasmophobia.">
+  <title>Phasmo-guide: Assistant d'enquête</title>
+  <link rel="icon" type="image/png" href="logo-phasmophobia.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand-nav">
+      <button class="brand" id="menuButton" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="siteMenu">
+        <img class="brand-logo" src="logo-phasmophobia.png" alt="Logo de Phasmophobia">
+        <span class="brand-copy">
+          <span class="eyebrow">Assistant d'enquête</span>
+          <span class="brand-title" id="brandTitle">Les Entités</span>
+        </span>
+        <span class="menu-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <nav class="site-menu" id="siteMenu" aria-label="Onglets du guide" hidden>
+        <button type="button" data-view="entities" aria-current="page">Les Entités</button>
+        <button type="button" data-view="tips">Tips divers</button>
+        <button type="button" data-view="equipment">Équipements</button>
+        <button type="button" data-view="cursed">Objets maudits</button>
+        <button type="button" data-view="maps">Maps</button>
+      </nav>
+    </div>
+    <div class="global-search" id="globalSearch">
+      <label class="global-search-box" for="globalSearchInput">
+        <span aria-hidden="true">⌕</span>
+        <span class="sr-only">Rechercher dans tout le guide</span>
+        <input id="globalSearchInput" type="search" placeholder="Rechercher dans le guide…" autocomplete="off" aria-controls="globalSearchResults" aria-expanded="false">
+      </label>
+      <div class="global-search-results" id="globalSearchResults" role="listbox" aria-label="Résultats de la recherche" hidden></div>
+    </div>
+    <div class="result-counter" id="resultCounterWrap" aria-live="polite"><strong id="resultCount">30</strong><span>entités possibles</span></div>
+  </header>
+
+  <main>
+    <div class="tab-view" id="entitiesView" data-view-panel="entities">
+    <section class="timers-panel" aria-labelledby="timersTitle">
+      <div class="timers-heading">
+        <div>
+          <p class="eyebrow">Outils d’enquête</p>
+          <h2 id="timersTitle">Timers</h2>
+        </div>
+        <fieldset class="map-size-selector">
+          <legend>Taille de la map</legend>
+          <div class="map-size-options">
+            <button type="button" data-map-size="S" aria-pressed="true">S</button>
+            <button type="button" data-map-size="M" aria-pressed="false">M</button>
+            <button type="button" data-map-size="L" aria-pressed="false">L</button>
+          </div>
+        </fieldset>
+      </div>
+      <div class="timers-grid" id="timersGrid">
+        <article class="timer-card" data-timer="hunt">
+          <div class="timer-card-heading">
+            <div><p class="timer-name">Durée de chasse</p><small class="timer-note" id="huntTimerNote">Map S · 30 s · alerte 20 % avant la fin</small></div>
+            <button class="timer-reset" type="button" aria-label="Réinitialiser le timer Durée de chasse" title="Réinitialiser"><span aria-hidden="true">↻</span></button>
+          </div>
+          <output class="timer-display" aria-live="polite">00:30</output>
+          <button class="timer-toggle" type="button">Démarrer</button>
+          <p class="timer-status" aria-live="assertive"></p>
+        </article>
+        <article class="timer-card" data-timer="huntCooldown">
+          <div class="timer-card-heading">
+            <div><p class="timer-name">Cooldown de chasse</p><small class="timer-note">25 s · alerte à 20 s</small></div>
+            <button class="timer-reset" type="button" aria-label="Réinitialiser le timer Cooldown de chasse" title="Réinitialiser"><span aria-hidden="true">↻</span></button>
+          </div>
+          <output class="timer-display" aria-live="polite">00:25</output>
+          <button class="timer-toggle" type="button">Démarrer</button>
+          <p class="timer-status" aria-live="assertive"></p>
+        </article>
+        <article class="timer-card" data-timer="incense">
+          <div class="timer-card-heading">
+            <div><p class="timer-name">Délais de chasse après encens</p><small class="timer-note">3 min · alertes à 1 min et 1 min 30</small></div>
+            <button class="timer-reset" type="button" aria-label="Réinitialiser le timer Délais de chasse après encens" title="Réinitialiser"><span aria-hidden="true">↻</span></button>
+          </div>
+          <output class="timer-display" aria-live="polite">03:00</output>
+          <button class="timer-toggle" type="button">Démarrer</button>
+          <p class="timer-status" aria-live="assertive"></p>
+        </article>
+        <article class="timer-card" data-timer="microphone">
+          <div class="timer-card-heading">
+            <div><p class="timer-name">Cooldown micro</p><small class="timer-note">1 min 20 · alerte à 1 min 05</small></div>
+            <button class="timer-reset" type="button" aria-label="Réinitialiser le timer Cooldown micro" title="Réinitialiser"><span aria-hidden="true">↻</span></button>
+          </div>
+          <output class="timer-display" aria-live="polite">01:20</output>
+          <button class="timer-toggle" type="button">Démarrer</button>
+          <p class="timer-status" aria-live="assertive"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="control-panel" aria-labelledby="filterTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Journal d’enquête</p>
+          <h2 id="filterTitle">Filtrer les entités</h2>
+        </div>
+        <button class="reset-button" id="resetButton" type="button">Tout réinitialiser</button>
+      </div>
+
+      <details class="investigation-notes" id="investigationNotesPanel">
+        <summary>
+          <span>Notes de l’enquête</span>
+          <small>Enregistrement automatique</small>
+        </summary>
+        <label for="investigationNotes" class="sr-only">Notes de l’enquête actuelle</label>
+        <textarea id="investigationNotes" rows="4" maxlength="2000" placeholder="Pièce favorite, comportements observés, tests à refaire…"></textarea>
+      </details>
+
+      <div class="evidence-mode-row">
+        <div>
+          <p class="filter-label">Nombre de preuves disponibles</p>
+          <div class="evidence-mode-options" id="evidenceModeOptions" role="group" aria-label="Nombre de preuves disponibles">
+            <button type="button" data-evidence-count="3" aria-pressed="true">3</button>
+            <button type="button" data-evidence-count="2" aria-pressed="false">2</button>
+            <button type="button" data-evidence-count="1" aria-pressed="false">1</button>
+            <button type="button" data-evidence-count="0" aria-pressed="false">0</button>
+          </div>
+        </div>
+        <p class="evidence-mode-note" id="evidenceModeNote" aria-live="polite"></p>
+      </div>
+
+      <p class="filter-help" id="evidenceFilterHelp">Clique une fois pour confirmer une preuve, deux fois pour l’exclure. Les preuves incompatibles sont automatiquement désactivées.</p>
+      <div class="evidence-filters" id="evidenceFilters" aria-label="Filtres de preuves"></div>
+
+      <div class="speed-filter-section">
+        <div class="speed-tools">
+          <div>
+            <p class="filter-label">Vitesses possibles</p>
+            <div class="speed-filters" id="speedFilters" aria-label="Filtres de vitesse">
+              <button class="speed-filter slow" type="button" data-speed="slow" aria-pressed="false"><strong>Lent</strong><span>&lt; 1,7 m/s</span></button>
+              <button class="speed-filter normal" type="button" data-speed="normal" aria-pressed="false"><strong>Normal</strong><span>1,7 m/s</span></button>
+              <button class="speed-filter fast" type="button" data-speed="fast" aria-pressed="false"><strong>Rapide</strong><span>&gt; 1,7 m/s</span></button>
+            </div>
+            <div class="gender-filter-section">
+              <p class="filter-label">Sexe possible</p>
+              <div class="gender-filters" id="genderFilters" aria-label="Filtres par sexe">
+                <button class="gender-filter" type="button" data-gender="♂" aria-pressed="false"><span aria-hidden="true">♂</span><strong>Homme</strong></button>
+                <button class="gender-filter" type="button" data-gender="♀" aria-pressed="false"><span aria-hidden="true">♀</span><strong>Femme</strong></button>
+              </div>
+            </div>
+          </div>
+          <section class="tempo-tool" aria-labelledby="tempoTitle">
+            <div class="tempo-copy">
+              <p class="filter-label" id="tempoTitle">Mesure</p>
+            </div>
+            <button class="tempo-reset" id="tempoReset" type="button" aria-label="Réinitialiser la mesure" title="Réinitialiser la mesure"><span aria-hidden="true">↻</span></button>
+            <div class="tempo-readout">
+              <p><strong id="tempoSpeed" aria-live="polite">—</strong><span>m/s</span></p>
+              <small id="tempoDetails">Deux clics minimum pour calculer.</small>
+            </div>
+            <button class="tempo-button" id="tempoButton" type="button">Cliquez au rythme des pas</button>
+          </section>
+        </div>
+      </div>
+
+      <div class="sanity-filter-section">
+        <div class="sanity-filter-heading">
+          <div>
+            <label class="filter-label" for="sanityFilter">Seuil de santé de chasse</label>
+            <p id="sanityFilterHelp">Affiche les entités capables de chasser à ce niveau ou au-dessus.</p>
+          </div>
+          <output id="sanityValue" for="sanityFilter">10 % et +</output>
+        </div>
+        <input class="sanity-range" id="sanityFilter" type="range" min="10" max="100" step="10" value="10" aria-describedby="sanityFilterHelp">
+        <div class="sanity-scale" aria-hidden="true">
+          <span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span><span>100</span>
+        </div>
+      </div>
+
+      <div class="search-row">
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <span class="sr-only">Rechercher une entité ou un comportement</span>
+          <input id="searchInput" type="search" placeholder="Rechercher une entité ou un comportement…" autocomplete="off">
+        </label>
+        <div class="legend" aria-label="Légende des filtres">
+          <span><i class="dot confirmed"></i>Confirmée</span>
+          <span><i class="dot excluded"></i>Exclue</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cards-section" aria-labelledby="entitiesTitle">
+      <div class="section-heading">
+        <h2 id="entitiesTitle">Entités compatibles</h2>
+        <p id="entitiesHeadingHint">★ Épingle un suspect · × Écarte une piste</p>
+      </div>
+      <div class="entity-grid" id="entityGrid"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <span aria-hidden="true">∅</span>
+        <h2>Aucune entité ne correspond</h2>
+        <p>Réinitialise un filtre ou vérifie les critères sélectionnés.</p>
+      </div>
+    </section>
+    </div>
+
+    <section class="tab-view truck-view" data-view-panel="tips" aria-labelledby="tipsTitle" hidden>
+      <header class="equipment-hero truck-hero">
+        <div>
+          <p class="eyebrow">Guide de terrain</p>
+          <h2 id="tipsTitle">Tips divers</h2>
+          <p>Des repères rapides pour préparer l’enquête, lire la situation et réagir correctement quand l’activité s’intensifie.</p>
+        </div>
+        <strong><span>7</span> guides</strong>
+      </header>
+
+      <nav class="equipment-nav tips-nav" aria-label="Sommaire des tips">
+        <a href="#tips-truck">Écrans du camion</a>
+        <a href="#tips-hunt">Comprendre une chasse</a>
+        <a href="#tips-media">Médias</a>
+        <a href="#tips-room">Pièce favorite</a>
+        <a href="#tips-environment">Électricité &amp; température</a>
+        <a href="#tips-placement">Placement</a>
+        <a href="#tips-errors">Erreurs fréquentes</a>
+      </nav>
+
+      <section class="tips-section" id="tips-truck" aria-labelledby="truckScreensTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Poste de surveillance</p>
+            <h3 id="truckScreensTitle">Les écrans du camion</h3>
+            <p>Cinq moniteurs pour suivre l’enquête à distance sans les confondre avec des preuves confirmées.</p>
+          </div>
+          <strong><span>5</span> écrans</strong>
+        </header>
+
+        <div class="truck-screen-grid">
+        <article class="truck-screen-card truck-screen-card--full">
+          <div class="truck-screen-topline"><span>Écran 00</span><span>Vidéosurveillance</span></div>
+          <h3>Moniteur de caméras</h3>
+          <p class="truck-screen-summary">Diffuse les images des caméras placées dans le lieu et permet d’observer une pièce à distance.</p>
+          <div class="truck-screen-content">
+            <section>
+              <h4>Fonctionnement</h4>
+              <ul>
+                <li>Faites défiler les flux des caméras installées pour surveiller les zones d’activité sans y entrer.</li>
+                <li>La vision nocturne aide à repérer les orbes fantomatiques et les silhouettes D.O.T.S.</li>
+              </ul>
+            </section>
+            <section>
+              <h4>Enregistrements vidéo</h4>
+              <ul>
+                <li>La caméra peut enregistrer des médias vidéo pour le journal : apparition de l’entité, écriture, orbe, objet jeté, porte ou lumière manipulée.</li>
+                <li>Un capteur de mouvement, du sel perturbé, une bougie soufflée, une planche Ouija ou un crucifix brûlé peuvent aussi compter s’ils sont bien cadrés.</li>
+              </ul>
+            </section>
+            <aside class="truck-tip">
+              <strong>Tip Goryo</strong>
+              <p>Cadrez une zone où l’activité est attendue avant de lancer l’enregistrement. Pour observer les D.O.T.S. d’un Goryo, surveillez la caméra depuis le camion pendant que personne ne reste dans sa pièce.</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="truck-screen-card">
+          <div class="truck-screen-topline"><span>Écran 01</span><span>Repérage du site</span></div>
+          <h3>Moniteur de carte</h3>
+          <p class="truck-screen-summary">Montre le plan du lieu, la position de l’équipe et les capteurs de mouvement activés.</p>
+          <div class="truck-screen-content">
+            <section>
+              <h4>Fonctionnement</h4>
+              <ul>
+                <li>Les marqueurs des enquêteurs facilitent les appels et les regroupements.</li>
+                <li>Un capteur de mouvement qui s’allume confirme un passage dans sa zone.</li>
+              </ul>
+            </section>
+            <aside class="truck-tip">
+              <strong>Tip de placement</strong>
+              <p>Posez un capteur devant une porte ou au-dessus d’un tas de sel. Depuis le camion, vous verrez rapidement si l’entité emprunte ce passage.</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="truck-screen-card">
+          <div class="truck-screen-topline"><span>Écran 02</span><span>Écoute à distance</span></div>
+          <h3>Moniteur de capteurs sonores</h3>
+          <p class="truck-screen-summary">Retransmet les sons captés par les capteurs sonores installés dans le lieu.</p>
+          <div class="truck-screen-content">
+            <section>
+              <h4>Fonctionnement</h4>
+              <ul>
+                <li>Chaque capteur couvre une zone large et permet d’en surveiller l’intensité sonore.</li>
+                <li>Les bruits servent surtout à situer l’activité, pas à valider une preuve.</li>
+              </ul>
+            </section>
+            <aside class="truck-tip">
+              <strong>Tip grandes maps</strong>
+              <p>Répartissez les capteurs dans les ailes ou les étages. Une zone soudainement bruyante donne une bonne direction à l’équipe sans avoir à tout fouiller.</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="truck-screen-card">
+          <div class="truck-screen-topline"><span>Écran 03</span><span>État de l’équipe</span></div>
+          <h3>Moniteur de santé mentale</h3>
+          <p class="truck-screen-summary">Affiche la santé mentale de chaque enquêteur et la moyenne de l’équipe.</p>
+          <div class="truck-screen-content">
+            <section>
+              <h4>Fonctionnement</h4>
+              <ul>
+                <li>La moyenne d’équipe permet d’anticiper les chasses de la plupart des entités.</li>
+                <li>Comparez les valeurs après une manifestation, une apparition ou la prise de cachets.</li>
+              </ul>
+            </section>
+            <aside class="truck-tip">
+              <strong>Tip d’équipe</strong>
+              <p>Une personne restée longtemps dans la pièce de l’entité peut être bien plus basse que la moyenne. Vérifiez qui doit prendre les cachets en priorité.</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="truck-screen-card">
+          <div class="truck-screen-topline"><span>Écran 04</span><span>Présence paranormale</span></div>
+          <h3>Moniteur d’activité</h3>
+          <p class="truck-screen-summary">Trace les variations d’activité paranormale relevées sur le site, de 0 à 10.</p>
+          <div class="truck-screen-content">
+            <section>
+              <h4>Fonctionnement</h4>
+              <ul>
+                <li>La valeur affichée est l’accumulation de tous les signaux E.M.F. du bâtiment.</li>
+                <li>Les pics peuvent venir d’interactions, d’événements ou d’une manifestation.</li>
+                <li>Un saut de 5 peut suggérer un E.M.F. 5, mais ne le confirme jamais à lui seul.</li>
+              </ul>
+            </section>
+            <aside class="truck-tip">
+              <strong>Tip d’enquête</strong>
+              <p>Un signal de 10 en une seule fois ne peut correspondre qu’au pouvoir du Poltergeist (ou à un Mimic qui l’imite).</p>
+            </aside>
+          </div>
+        </article>
+        </div>
+      </section>
+
+      <section class="tips-section" id="tips-hunt" aria-labelledby="huntGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Survie</p>
+            <h3 id="huntGuideTitle">Comprendre une chasse</h3>
+            <p>Repère la phase en cours pour choisir entre fuir, casser la ligne de vue ou te cacher.</p>
+          </div>
+          <strong><span>3</span> phases</strong>
+        </header>
+        <div class="tips-phase-grid">
+          <article class="tips-card tips-phase-card">
+            <span class="tips-number">01</span>
+            <h4>Période de grâce</h4>
+            <p>L’entrée se verrouille, les appareils proches dysfonctionnent et l’entité commence son râle sans pouvoir tuer immédiatement.</p>
+            <p class="tips-action"><strong>Réflexe :</strong> coupe l’électronique tenue en main, éloigne-toi de la pièce et rejoins ton itinéraire de secours.</p>
+          </article>
+          <article class="tips-card tips-phase-card">
+            <span class="tips-number">02</span>
+            <h4>Phase de recherche</h4>
+            <p>L’entité parcourt le lieu et peut réagir aux voix ainsi qu’aux appareils électroniques allumés à proximité.</p>
+            <p class="tips-action"><strong>Réflexe :</strong> reste silencieux, garde ton équipement éteint et ne change pas de cachette sans nécessité.</p>
+          </article>
+          <article class="tips-card tips-phase-card">
+            <span class="tips-number">03</span>
+            <h4>Phase de poursuite</h4>
+            <p>Dès qu’elle détecte un joueur, l’entité se dirige vers lui puis vérifie le dernier endroit où elle l’a perçu.</p>
+            <p class="tips-action"><strong>Réflexe :</strong> coupe la ligne de vue avec plusieurs angles, utilise l’encens si nécessaire puis cache-toi.</p>
+          </article>
+        </div>
+        <aside class="tips-callout tips-callout--danger">
+          <strong>Repères de distance</strong>
+          <p>Les appareils et lumières dysfonctionnent dans un rayon d’environ 10 m au même étage. Les pas peuvent être entendus jusqu’à environ 20 m : écoute avant de sortir.</p>
+        </aside>
+      </section>
+
+      <section class="tips-section" id="tips-media" aria-labelledby="mediaGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Chronicle</p>
+            <h3 id="mediaGuideTitle">Médias &amp; investigation parfaite</h3>
+            <p>Privilégie des captures différentes : les doublons rapportent moins et empêchent de remplir proprement le journal.</p>
+          </div>
+          <strong><span>3</span> médias</strong>
+        </header>
+        <div class="tips-media-grid">
+          <article class="tips-card">
+            <p class="tips-card-kicker">5 emplacements</p>
+            <h4>Photos</h4>
+            <ul>
+              <li>Os et objet maudit.</li>
+              <li>Entité, D.O.T.S. ou forme d’ombre.</li>
+              <li>E.M.F., gel, écriture, ultraviolet ou crucifix utilisé.</li>
+            </ul>
+          </article>
+          <article class="tips-card">
+            <p class="tips-card-kicker">5 emplacements</p>
+            <h4>Vidéos</h4>
+            <ul>
+              <li>Entité en chasse, orbes ou événement.</li>
+              <li>Porte, lumière, objet jeté ou interaction.</li>
+              <li>Sel, bougie, crucifix ou capteur de mouvement en action.</li>
+            </ul>
+          </article>
+          <article class="tips-card">
+            <p class="tips-card-kicker">3 emplacements</p>
+            <h4>Sons</h4>
+            <ul>
+              <li>Voix, rire, chant ou son paranormal.</li>
+              <li>Réponse Spirit Box ou E.M.F. 5 audible.</li>
+              <li>Chasse, écriture, flamme ou crucifix.</li>
+            </ul>
+          </article>
+        </div>
+        <aside class="tips-checklist">
+          <div><span>1</span><p>Trouver l’os</p></div>
+          <div><span>2</span><p>Remplir les médias uniques</p></div>
+          <div><span>3</span><p>Finir les 3 objectifs</p></div>
+          <div><span>4</span><p>Identifier l’entité</p></div>
+        </aside>
+      </section>
+
+      <section class="tips-section" id="tips-room" aria-labelledby="roomGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Localisation</p>
+            <h3 id="roomGuideTitle">Trouver la pièce favorite</h3>
+            <p>Combine plusieurs indices au lieu de conclure sur une seule porte déplacée ou un seul objet jeté.</p>
+          </div>
+        </header>
+        <ol class="tips-step-list">
+          <li><span>01</span><div><strong>Ouvre rapidement la porte d’entrée</strong><p>L’activité et l’évolution des températures commencent réellement au déverrouillage.</p></div></li>
+          <li><span>02</span><div><strong>Écoute avant de disperser le matériel</strong><p>Repère téléphone, porte, objet, eau ou autre interaction et annonce sa direction.</p></div></li>
+          <li><span>03</span><div><strong>Compare les températures</strong><p>Parcours plusieurs pièces : une zone durablement plus froide est une piste, pas encore une confirmation.</p></div></li>
+          <li><span>04</span><div><strong>Recoupe avec l’E.M.F.</strong><p>Contrôle les interactions récentes puis pose Spirit Box, livre, D.O.T.S. et caméra dans la zone la plus cohérente.</p></div></li>
+          <li><span>05</span><div><strong>Vérifie que l’activité se répète</strong><p>Si tout devient silencieux, contrôle les pièces voisines : l’entité peut errer ou changer de pièce favorite.</p></div></li>
+        </ol>
+        <aside class="tips-callout">
+          <strong>Conseil de pro</strong>
+          <p>Après avoir ouvert la porte, ne rentrez pas tout de suite : laissez les températures descendre. Pendant ce temps, approchez votre matériel tout en surveillant les moniteurs.</p>
+        </aside>
+      </section>
+
+      <section class="tips-section" id="tips-environment" aria-labelledby="environmentGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Environnement</p>
+            <h3 id="environmentGuideTitle">Électricité, lumière &amp; température</h3>
+            <p>Ces trois éléments influencent la santé mentale, la lecture du lieu et plusieurs comportements d’entités.</p>
+          </div>
+        </header>
+        <div class="tips-card-grid tips-card-grid--four">
+          <article class="tips-card"><h4>Disjoncteur</h4><p>Allume-le tôt pour stabiliser la température intérieure et utiliser les lumières. Une surtension peut toutefois le faire sauter.</p></article>
+          <article class="tips-card"><h4>Lumières</h4><p>Rester dans une pièce éclairée ralentit la perte passive de santé mentale. Éteins les lumières derrière toi pour éviter la surtension.</p></article>
+          <article class="tips-card"><h4>Température</h4><p>Compare les pièces après quelques instants. Le froid localise l’activité ; seule une mesure réellement négative confirme le gel.</p></article>
+          <article class="tips-card"><h4>Entités à surveiller</h4><p>Le Djinn dépend du disjoncteur, le Hantu du froid, le Cauchemar de la lumière et l’Onryo des flammes.</p></article>
+        </div>
+      </section>
+
+      <section class="tips-section" id="tips-placement" aria-labelledby="placementGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">Installation</p>
+            <h3 id="placementGuideTitle">Placement selon la taille de la map</h3>
+            <p>Adapte la couverture du matériel au temps nécessaire pour parcourir le lieu.</p>
+          </div>
+        </header>
+        <div class="tips-map-grid">
+          <article class="tips-card tips-map-card"><span>S</span><h4>Petite map</h4><ul><li>Concentre caméra, D.O.T.S. et livre dans la pièce.</li><li>Place sel et mouvement sur l’accès principal.</li><li>Prépare une cachette avant le premier test prolongé.</li></ul></article>
+          <article class="tips-card tips-map-card"><span>M</span><h4>Map moyenne</h4><ul><li>Découpe le lieu par aile ou par étage.</li><li>Utilise les capteurs sonores pour éliminer des zones.</li><li>Garde un trajet clair entre pièce, camion et cachette.</li></ul></article>
+          <article class="tips-card tips-map-card"><span>L</span><h4>Grande map</h4><ul><li>Avance par secteurs avec un point de regroupement.</li><li>Échelonne sons et mouvements dans les couloirs clés.</li><li>Conserve caméra ou équipement de tête pour guider depuis le camion.</li></ul></article>
+        </div>
+      </section>
+
+      <section class="tips-section" id="tips-errors" aria-labelledby="errorsGuideTitle">
+        <header class="tips-section-heading">
+          <div>
+            <p class="eyebrow">À éviter</p>
+            <h3 id="errorsGuideTitle">Erreurs fréquentes</h3>
+            <p>Les mauvais réflexes qui coûtent le plus souvent une preuve, du temps ou une vie.</p>
+          </div>
+        </header>
+        <div class="tips-error-grid">
+          <article><strong>Confondre événement et chasse</strong><p>Vérifie la porte d’entrée et conserve une route de fuite au lieu de rester face à l’apparition.</p></article>
+          <article><strong>Garder un appareil allumé</strong><p>Une lampe ou un outil tenu en main peut révéler ta position pendant une chasse.</p></article>
+          <article><strong>Valider l’E.M.F. depuis le camion</strong><p>Le graphe suggère une activité ; seul un lecteur atteignant réellement le niveau 5 confirme la preuve.</p></article>
+          <article><strong>Tout poser au même endroit</strong><p>Cadre plusieurs angles et protège les passages importants plutôt que d’empiler le matériel.</p></article>
+          <article><strong>Multiplier les médias identiques</strong><p>Consulte le journal après chaque capture et cherche un sujet différent pour la suivante.</p></article>
+          <article><strong>Conclure sur une seule observation</strong><p>Répète le test et recoupe comportement, vitesse, santé mentale et preuves disponibles.</p></article>
+          <article><strong>Ignorer un changement de pièce</strong><p>Si les preuves s’arrêtent, reprends température et E.M.F. dans les pièces voisines.</p></article>
+          <article><strong>Entrer sans cachette prévue</strong><p>Avant les tests risqués, choisis une cachette et vérifie que le chemin reste accessible.</p></article>
+        </div>
+      </section>
+    </section>
+    <section class="tab-view equipment-view" data-view-panel="equipment" aria-labelledby="equipmentTitle" hidden>
+      <header class="equipment-hero">
+        <div>
+          <p class="eyebrow">Matériel d’enquête</p>
+          <h2 id="equipmentTitle">Les Équipements</h2>
+          <p>Utilité, conseils pratiques et différences entre les trois tiers de chaque objet.</p>
+        </div>
+        <strong><span id="equipmentCount">21</span> équipements</strong>
+      </header>
+      <nav class="equipment-nav" aria-label="Catégories d’équipements">
+        <a href="#equipment-evidence">Objets de preuve</a>
+        <a href="#equipment-support">Médias, suivi & éclairage</a>
+        <a href="#equipment-survival">Protection & survie</a>
+      </nav>
+      <div class="equipment-catalog" id="equipmentCatalog"></div>
+    </section>
+    <section class="tab-view equipment-view cursed-view" data-view-panel="cursed" aria-labelledby="cursedTitle" hidden>
+      <header class="equipment-hero cursed-hero">
+        <div>
+          <p class="eyebrow">Pouvoirs &amp; contreparties</p>
+          <h2 id="cursedTitle">Les Objets maudits</h2>
+          <p>Fonctionnement, coûts de santé mentale, risques et usages pratiques de chaque possession.</p>
+        </div>
+        <strong><span id="cursedCount">7</span> objets</strong>
+      </header>
+      <aside class="cursed-warning" aria-labelledby="cursedHuntTitle">
+        <div>
+          <p class="equipment-card-kicker">Rappel important</p>
+          <h3 id="cursedHuntTitle">Chasse maudite</h3>
+        </div>
+        <ul>
+          <li>La phase de préparation tombe à 1 seconde.</li>
+          <li>La chasse dure 20 secondes de plus.</li>
+          <li>L’encens et les crucifix tiers 1 et 2 ne peuvent pas empêcher son déclenchement.</li>
+        </ul>
+      </aside>
+      <div class="equipment-catalog" id="cursedCatalog"></div>
+    </section>
+    <section class="tab-view maps-view" data-view-panel="maps" aria-labelledby="mapsTitle" hidden>
+      <header class="equipment-hero maps-hero">
+        <div>
+          <p class="eyebrow">Plans d’enquête</p>
+          <h2 id="mapsTitle">Les Maps</h2>
+          <p>Consulte les plans complets et ouvre chaque image en grand pour lire les pièces, les étages et les repères.</p>
+        </div>
+        <strong><span id="mapCount">25</span> plans</strong>
+      </header>
+      <nav class="equipment-nav maps-nav" aria-label="Tailles des maps">
+        <a href="#maps-small">Maps small</a>
+        <a href="#maps-medium">Maps medium</a>
+        <a href="#maps-large">Maps large</a>
+      </nav>
+      <div class="maps-catalog" id="mapsCatalog"></div>
+    </section>
+
+    <dialog class="map-dialog" id="mapDialog" aria-labelledby="mapDialogTitle">
+      <header class="map-dialog-header">
+        <div>
+          <p class="equipment-card-kicker" id="mapDialogSize"></p>
+          <h3 id="mapDialogTitle"></h3>
+        </div>
+        <form method="dialog">
+          <button class="map-dialog-close" type="submit" aria-label="Fermer le plan">×</button>
+        </form>
+      </header>
+      <div class="map-dialog-stage">
+        <img id="mapDialogImage" alt="">
+      </div>
+    </dialog>
+  </main>
+
+  <footer>
+    <p>Informations vérifiées pour <strong>Phasmophobia v0.19.0.2</strong> · Dernière révision du guide le <time datetime="2026-09-21">21 septembre 2026</time></p>
+  </footer>
+
+  <template id="cardTemplate">
+    <article class="entity-card">
+      <div class="card-topline"></div>
+      <header class="card-header">
+        <div>
+          <p class="card-kicker">Entité</p>
+          <h3></h3>
+        </div>
+        <div class="card-actions">
+          <button class="pin-button" type="button" aria-label="Épingler cette entité" title="Épingler">★</button>
+          <button class="dismiss-button" type="button" aria-label="Écarter cette entité" title="Écarter">×</button>
+        </div>
+      </header>
+      <div class="evidence-list"></div>
+      <dl class="metrics">
+        <div><dt>🧠 Santé de chasse</dt><dd class="sanity"></dd></div>
+        <div><dt>👣 Vitesse</dt><dd class="speed"></dd></div>
+      </dl>
+      <h4 class="behaviors-title" hidden>Comportements d’identification</h4>
+      <ul class="behaviors"></ul>
+      <div class="defense-table-wrap" hidden>
+        <table class="defense-table">
+          <caption>Effets des objets de défense selon l’état du Gallu</caption>
+          <thead><tr><th scope="col">État</th><th scope="col">Encens</th><th scope="col">Crucifix</th><th scope="col">Sel</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <details>
+        <summary>Tests conseillés</summary>
+        <ul class="tests"></ul>
+      </details>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
